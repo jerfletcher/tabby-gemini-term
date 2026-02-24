@@ -35,6 +35,19 @@ The stack consists of three primary services:
 3.  Configure the environment variables in the Coolify UI (see table below).
 4.  **Important:** In the Coolify service settings, map your domain (e.g., `https://tabby.domain.com`) to the `tabby` service on port `80`.
 
+### 🔑 GitHub OAuth Setup
+
+To enable GitHub login in Tabby, you must create a GitHub OAuth Application:
+
+1.  Go to **[GitHub Developer Settings](https://github.com/settings/developers)**.
+2.  Click **New OAuth App**.
+3.  **Application Name:** `Tabby Web (Coolify)`
+4.  **Homepage URL:** Your Tabby domain (e.g., `https://tabby.domain.com`).
+5.  **Authorization callback URL:** `https://tabby.domain.com/complete/github/` (**Important:** include the trailing slash).
+6.  Click **Register application**.
+7.  Copy your **Client ID** and generate a **Client Secret**.
+8.  Paste these into Coolify as `SOCIAL_AUTH_GITHUB_KEY` and `SOCIAL_AUTH_GITHUB_SECRET`.
+
 ### 3. Environment Variables
 
 | Variable | Description |
