@@ -1,64 +1,63 @@
-# Tabby + Gemini CLI: Cloud-Native Terminal coding Agent
+# ⚡ Tabby + Gemini CLI: AI-Powered Cloud Terminal
 
-A professional, containerized terminal coding environment designed for seamless deployment on **Coolify**. This stack provides a persistent, tool-heavy workspace powered by **Gemini CLI**, accessible through the sleek **Tabby Web** interface.
+![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)
+![Coolify Supported](https://img.shields.io/badge/Platform-Coolify-blue.svg)
+![Docker Compose](https://img.shields.io/badge/Build-Docker_Compose-blue.svg)
+![AI Powered](https://img.shields.io/badge/AI-Gemini_CLI-orange.svg)
 
-## 🚀 Overview
+A high-performance, containerized terminal environment designed for engineers who need a persistent, AI-augmented workspace in the cloud. This stack seamlessly integrates **[Tabby Web](https://github.com/Eugeny/tabby-web)** with the **[Gemini CLI](https://github.com/google/gemini-cli)**, providing a sleek interface for advanced coding and infrastructure management.
 
-This repository provides a multi-container Docker Compose stack that includes:
-- **Tabby Web:** A high-performance web-based terminal emulator.
-- **Gemini Terminal:** A specialized Node.js environment pre-loaded with:
-    - `gemini-cli`: AI-powered coding assistance.
-    - `wrangler`: For Cloudflare Workers and Pages management.
-    - `gh`: GitHub CLI for repository management.
-    - `tmux`, `git`, and other essential CLI tools.
-- **MariaDB:** High-performance database for Tabby's session and configuration persistence.
+## 🌟 Key Features
 
-## 🛠️ Integrated Tools
+*   **Integrated AI Assistant:** Leverage Gemini CLI for real-time coding help, shell command generation, and technical insights.
+*   **Sleek Web Interface:** Powered by the official [Tabby Web](https://github.com/Eugeny/tabby-web) for a terminal experience that feels like a native app.
+*   **Tool-Heavy Backend:** Pre-configured with `wrangler`, `gh` CLI, `tmux`, and more.
+*   **Persistent Environment:** Your workspace and AI authentications stay safe across deployments using Docker volumes.
+*   **Secure & Private:** Designed for deployment on self-hosted instances like [Coolify](https://coolify.io).
 
-The environment is pre-configured with access to:
-- **Cloudflare (Wrangler):** Manage edge deployments directly from your terminal.
-- **Coolify API:** Programmatically interact with your self-hosted infrastructure.
-- **GitHub CLI:** Seamless private repo access and PR management.
-- **Telegram:** Integrated bot notifications and alerts.
+## 🏗️ Architecture
 
-## 📦 Deployment on Coolify
+The stack consists of three primary services:
+1.  **Tabby (Web UI):** The frontend terminal interface.
+2.  **Gemini Terminal:** The background tool-container where your code and CLI tools live.
+3.  **MariaDB:** A robust database backend for Tabby settings and session management.
 
-1. **Create Application:**
-   - In Coolify, create a new application and point it to this repository.
-   - Select the **Docker Compose** build pack.
+## 🚀 Quick Start on Coolify
 
-2. **Environment Variables:**
-   Configure the following variables in the Coolify UI:
+### 1. Prerequisites
+-   A running [Coolify](https://coolify.io) instance.
+-   A GitHub OAuth Application (for Tabby login).
+-   A Google API Key (for Gemini CLI features).
 
-   | Variable | Description |
-   | :--- | :--- |
-   | `COOLIFY_FQDN` | The domain for your Tabby instance (e.g., `tabby.domain.com`). |
-   | `GH_TOKEN` | Personal Access Token for GitHub CLI operations. |
-   | `CLOUDFLARE_API_TOKEN` | API Token for Wrangler/Cloudflare deployments. |
-   | `COOLIFY_API_TOKEN` | Token to manage your Coolify instance via CLI. |
-   | `TELEGRAM_TOKEN` | Bot token for Telegram integration. |
-   | `GOOGLE_API_KEY` | Required for Gemini CLI AI features. |
-   | `SOCIAL_AUTH_GITHUB_KEY` | GitHub OAuth Client ID for Tabby login. |
-   | `SOCIAL_AUTH_GITHUB_SECRET` | GitHub OAuth Client Secret for Tabby login. |
+### 2. Deployment Steps
+1.  Create a new **Application** in Coolify.
+2.  Connect this repository and select the **Docker Compose** build pack.
+3.  Configure the environment variables in the Coolify UI (see table below).
+4.  **Important:** In the Coolify service settings, map your domain (e.g., `https://tabby.domain.com`) to the `tabby` service on port `80`.
 
-3. **Domain Mapping:**
-   - Map your primary domain (e.g., `https://tabby.domain.com`) to the `tabby` service on port `80`.
+### 3. Environment Variables
+
+| Variable | Description |
+| :--- | :--- |
+| `COOLIFY_FQDN` | The primary domain for your Tabby instance. |
+| `SOCIAL_AUTH_GITHUB_KEY` | GitHub OAuth Client ID. |
+| `SOCIAL_AUTH_GITHUB_SECRET` | GitHub OAuth Client Secret. |
+| `GOOGLE_API_KEY` | Your Google API Key for AI features. |
+| `GH_TOKEN` | Personal Access Token for GitHub CLI. |
+| `CLOUDFLARE_API_TOKEN` | API Token for Wrangler deployments. |
+| `TELEGRAM_TOKEN` | Token for integrated bot alerts. |
 
 ## ⌨️ Usage
 
-Once deployed:
-1. Access the web UI at your configured domain.
-2. Log in using the GitHub OAuth provider.
-3. To access your tools, go to **Settings > Profiles & Connections**.
-4. Add a new **Docker** profile and select the `gemini-terminal` container.
-5. Launch the profile to start coding with your AI agent.
+Once the stack is live:
+1.  Log in via GitHub OAuth.
+2.  Navigate to **Settings > Profiles & Connections**.
+3.  Create a **Docker** profile and select the `gemini-terminal` container.
+4.  Run the profile to enter your persistent, AI-powered coding environment.
 
-## 💾 Persistence
+## ⚖️ License
 
-The stack uses Docker volumes to ensure your data stays safe across deployments:
-- `gemini_workspace`: Your working files and projects.
-- `gemini_auth`: Persistence for Gemini CLI and other tool authentications.
-- `tabby-db`: Persistent MariaDB storage for Tabby settings.
+Distributed under the MIT License. See `LICENSE` for more information.
 
 ---
-*Created and maintained for cloud-native engineers.*
+*Maintained by the cloud-native engineering community.*
