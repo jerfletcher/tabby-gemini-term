@@ -3,37 +3,32 @@ services:
     image: ghcr.io/eugeny/tabby-web:latest
     restart: always
     depends_on:
-      db:
-        condition: service_healthy
+      - db
     environment:
-      - DATABASE_URL=postgres://tabby:password@db:5432/tabby
+      - DATABASE_URL=mysql://tabby:password@db/tabby
       - APP_URL=https://${COOLIFY_FQDN}
-      - PORT=8000
-      - GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000
       - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
       - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - COOLIFY_API_TOKEN=${COOLIFY_API_TOKEN}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - GH_TOKEN=${GH_TOKEN}
+      - DEBUG=False
     volumes:
       - tabby-data:/app-dist
       - /var/run/docker.sock:/var/run/docker.sock
-    networks:
-      - tabby-net
 
   db:
-    image: postgres:15-alpine
+    image: mariadb:10.7.1
     restart: always
     environment:
-      - POSTGRES_DB=tabby
-      - POSTGRES_USER=tabby
-      - POSTGRES_PASSWORD=password
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U tabby"]
-      interval: 5s
-      timeout: 5s
-      retries: 10
+      - MARIADB_DATABASE=tabby
+      - MARIADB_USER=tabby
+      - MARIADB_PASSWORD=password
+      - MARIADB_ROOT_PASSWORD=${SERVICE_PASSWORD_ROOT}
     volumes:
-      - tabby-db:/var/lib/postgresql/data
-    networks:
-      - tabby-net
+      - tabby-db:/var/lib/mysql
 
   gemini-terminal:
     image: node:22-bookworm
@@ -51,21 +46,7 @@ services:
       - gemini_workspace:/workspace
       - gemini_auth:/root/.config/google-gemini-cli
     working_dir: /workspace
-    command: >
-      bash -c "apt-get update && apt-get install -y curl git tmux gnupg &&
-      mkdir -p -m 755 /etc/apt/keyrings &&
-      curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null &&
-      chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg &&
-      echo \"deb [arch=$$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main\" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null &&
-      apt-get update && apt-get install -y gh &&
-      npm install -g @google/gemini-cli wrangler &&
-      node -e 'setInterval(() => {}, 1000)'"
-    networks:
-      - tabby-net
-
-networks:
-  tabby-net:
-    driver: bridge
+    command: node -e 'setInterval(() => {}, 1000)'
 
 volumes:
   tabby-data:
