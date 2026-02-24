@@ -1,0 +1,24 @@
+services:
+  tabby:
+    image: ghcr.io/eugeny/tabby-web:latest
+    restart: always
+    depends_on:
+      - db
+    environment:
+      - DATABASE_URL=postgres://tabby:password@db:5432/tabby
+      - APP_URL=https://${COOLIFY_FQDN}
+      - PORT=80
+    networks:
+      - tabby-net
+  db:
+    image: postgres:15-alpine
+    restart: always
+    environment:
+      - POSTGRES_DB=tabby
+      - POSTGRES_USER=tabby
+      - POSTGRES_PASSWORD=password
+    networks:
+      - tabby-net
+networks:
+  tabby-net:
+    driver: bridge
