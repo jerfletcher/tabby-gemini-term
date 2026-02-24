@@ -9,12 +9,6 @@ services:
       - APP_URL=https://${COOLIFY_FQDN}
       - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
       - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
-      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
-      - COOLIFY_API_TOKEN=${COOLIFY_API_TOKEN}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - GH_TOKEN=${GH_TOKEN}
-      - DEBUG=False
     volumes:
       - tabby-data:/app-dist
       - /var/run/docker.sock:/var/run/docker.sock
@@ -30,26 +24,6 @@ services:
     volumes:
       - tabby-db:/var/lib/mysql
 
-  gemini-terminal:
-    image: node:22-bookworm
-    container_name: gemini-terminal
-    restart: always
-    environment:
-      - TTY_USER=${TTY_USER:-admin}
-      - TTY_PASS=${TTY_PASS:-password}
-      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
-      - COOLIFY_API_TOKEN=${COOLIFY_API_TOKEN}
-      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
-      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
-      - GH_TOKEN=${GH_TOKEN}
-    volumes:
-      - gemini_workspace:/workspace
-      - gemini_auth:/root/.config/google-gemini-cli
-    working_dir: /workspace
-    command: node -e 'setInterval(() => {}, 1000)'
-
 volumes:
   tabby-data:
   tabby-db:
-  gemini_workspace:
-  gemini_auth:
