@@ -8,7 +8,8 @@ services:
     environment:
       - DATABASE_URL=postgres://tabby:password@db:5432/tabby
       - APP_URL=https://${COOLIFY_FQDN}
-      - PORT=80
+      - PORT=8000
+      - GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000
       - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
       - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
     volumes:
