@@ -3,13 +3,20 @@ services:
     image: ghcr.io/eugeny/tabby-web:latest
     restart: always
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       - DATABASE_URL=postgres://tabby:password@db:5432/tabby
       - APP_URL=https://${COOLIFY_FQDN}
       - PORT=80
+      - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
+      - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
+    volumes:
+      - tabby-data:/app-dist
+      - /var/run/docker.sock:/var/run/docker.sock
     networks:
       - tabby-net
+
   db:
     image: postgres:15-alpine
     restart: always
@@ -17,8 +24,50 @@ services:
       - POSTGRES_DB=tabby
       - POSTGRES_USER=tabby
       - POSTGRES_PASSWORD=password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U tabby"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - tabby-db:/var/lib/postgresql/data
     networks:
       - tabby-net
+
+  gemini-terminal:
+    image: node:22-bookworm
+    container_name: gemini-terminal
+    restart: always
+    environment:
+      - TTY_USER=${TTY_USER:-admin}
+      - TTY_PASS=${TTY_PASS:-password}
+      - GOOGLE_API_KEY=${GOOGLE_API_KEY}
+      - COOLIFY_API_TOKEN=${COOLIFY_API_TOKEN}
+      - CLOUDFLARE_API_TOKEN=${CLOUDFLARE_API_TOKEN}
+      - TELEGRAM_TOKEN=${TELEGRAM_TOKEN}
+      - GH_TOKEN=${GH_TOKEN}
+    volumes:
+      - gemini_workspace:/workspace
+      - gemini_auth:/root/.config/google-gemini-cli
+    working_dir: /workspace
+    command: >
+      bash -c "apt-get update && apt-get install -y curl git tmux gnupg &&
+      mkdir -p -m 755 /etc/apt/keyrings &&
+      curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null &&
+      chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg &&
+      echo \"deb [arch=$$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main\" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null &&
+      apt-get update && apt-get install -y gh &&
+      npm install -g @google/gemini-cli wrangler &&
+      node -e 'setInterval(() => {}, 1000)'"
+    networks:
+      - tabby-net
+
 networks:
   tabby-net:
     driver: bridge
+
+volumes:
+  tabby-data:
+  tabby-db:
+  gemini_workspace:
+  gemini_auth:
