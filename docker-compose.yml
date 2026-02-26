@@ -14,6 +14,8 @@ services:
     volumes:
       - tabby-data:/app-dist
       - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - coolify
 
   db:
     image: mariadb:10.7.1
@@ -25,6 +27,8 @@ services:
       - MARIADB_ROOT_PASSWORD=${SERVICE_PASSWORD_ROOT}
     volumes:
       - tabby-db:/var/lib/mysql
+    networks:
+      - coolify
 
   gemini-terminal:
     image: node:22-bookworm
@@ -51,6 +55,12 @@ services:
       apt-get update && apt-get install -y gh &&
       npm install -g @google/gemini-cli wrangler &&
       node -e 'setInterval(() => {}, 1000)'"
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   tabby-data:
