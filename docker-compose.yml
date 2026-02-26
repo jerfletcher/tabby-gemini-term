@@ -8,8 +8,8 @@ services:
     environment:
       - DATABASE_URL=mysql://tabby:password@db/tabby
       - APP_URL=https://tabby.0mod.com
-      - PORT=8000
-      - GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000
+      - PORT=80
+      - GUNICORN_CMD_ARGS=--bind=0.0.0.0:80
       - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
       - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
     volumes:
