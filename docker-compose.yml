@@ -4,17 +4,23 @@ services:
     restart: always
     depends_on:
       - db
-    command: >
-      sh -c "sed -i 's/{{backendURL}}/https:\/\/tabby.0mod.com/g' /app/public/index.html && /start.sh"
+    command: /start.sh
     environment:
       - DATABASE_URL=mysql://tabby:password@db/tabby
-      - APP_URL=https://tabby.0mod.com
+      - APP_URL=http://tabby.0mod.com
       - PORT=8000
       - GUNICORN_CMD_ARGS=--bind=0.0.0.0:8000
       - SOCIAL_AUTH_GITHUB_KEY=${SOCIAL_AUTH_GITHUB_KEY}
       - SOCIAL_AUTH_GITHUB_SECRET=${SOCIAL_AUTH_GITHUB_SECRET}
     volumes:
       - tabby-data:/app/data
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.tabby.rule=Host(`tabby.0mod.com`)"
+      - "traefik.http.services.tabby.loadbalancer.server.port=8000"
+      - "traefik.http.routers.tabby.entrypoints=web"
+    networks:
+      - coolify
 
   db:
     image: mariadb:10.7.1
@@ -26,6 +32,12 @@ services:
       - MARIADB_ROOT_PASSWORD=${SERVICE_PASSWORD_ROOT}
     volumes:
       - tabby-db:/var/lib/mysql
+    networks:
+      - coolify
+
+networks:
+  coolify:
+    external: true
 
 volumes:
   tabby-data:
