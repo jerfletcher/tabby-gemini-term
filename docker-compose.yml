@@ -4,7 +4,7 @@ services:
     restart: always
     depends_on:
       - db
-    entrypoint: ["sh", "-c", "sed -i 's/{{backendURL}}/https:\\/\\/tabby.0mod.com/g' /app/public/index.html && exec /start.sh"]
+    command: /start.sh
     environment:
       - DATABASE_URL=mysql://tabby:password@db/tabby
       - APP_URL=https://tabby.0mod.com
